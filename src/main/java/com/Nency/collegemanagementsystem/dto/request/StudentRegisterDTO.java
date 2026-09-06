@@ -1,0 +1,32 @@
+package com.nency.collegemanagementsystem.dto.request;
+
+import jakarta.validation.constraints.*;
+import lombok.Data;
+
+@Data
+public class StudentRegisterDTO {
+
+    @NotBlank(message = "Name is required")
+    private String name;
+
+    @Email(message = "Invalid email")
+    @NotBlank(message = "Email is required")
+    private String email;
+
+    @NotBlank(message = "Phone is required")
+    private String phone;
+
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters")
+    @Pattern(
+            regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).+$",
+            message = "Password must contain 1 uppercase, 1 number, and 1 special character"
+    )
+    private String password;
+
+    @NotBlank(message = "Branch is required")
+    private String branch;
+
+    @NotNull(message = "Enrollment year is required")
+    private Integer enrollmentYear;
+}

@@ -1,0 +1,106 @@
+package com.nency.collegemanagementsystem.controller;
+
+import com.nency.collegemanagementsystem.dto.ChangePasswordDTO;
+import com.nency.collegemanagementsystem.dto.ForgotPasswordDTO;
+import com.nency.collegemanagementsystem.dto.ResetPasswordDTO;
+import com.nency.collegemanagementsystem.dto.request.AdminRegisterDTO;
+import com.nency.collegemanagementsystem.dto.request.FacultyRegisterDTO;
+import com.nency.collegemanagementsystem.dto.request.LoginDTO;
+import com.nency.collegemanagementsystem.dto.request.StudentRegisterDTO;
+import com.nency.collegemanagementsystem.dto.response.ApiResponse;
+import com.nency.collegemanagementsystem.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
+@Tag(name = "Student APIs", description = "Operations related to students")
+public class AuthController {
+
+    private final AuthService authService;
+
+    @PostMapping("/student/register")
+    public ResponseEntity<ApiResponse> registerStudent(@Valid @RequestBody StudentRegisterDTO request) {
+
+        ApiResponse response = authService.registerStudent(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/faculty/register")
+    public ResponseEntity<ApiResponse> registerFaculty(@Valid @RequestBody FacultyRegisterDTO request) {
+
+        ApiResponse response = authService.registerFaculty(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/admin/register")
+    public ResponseEntity<ApiResponse> registerAdmin(@Valid @RequestBody AdminRegisterDTO request) {
+        ApiResponse response = authService.registerAdmin(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Student Login", description = "Authenticate student and return JWT token")
+    @PostMapping("/student/login")
+    public ResponseEntity<ApiResponse> loginStudent(@RequestBody LoginDTO request) {
+        ApiResponse response = authService.loginStudent(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/faculty/login")
+    public ResponseEntity<ApiResponse> loginFaculty(@RequestBody LoginDTO request) {
+        ApiResponse response = authService.loginFaculty(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/admin/login")
+    public ResponseEntity<ApiResponse> loginAdmin(@RequestBody LoginDTO request) {
+        ApiResponse response = authService.loginAdmin(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/profile")
+    @PreAuthorize("hasRole('STUDENT')")
+    public String getStudentProfile() {
+        return "Student Profile";
+    }
+
+    @GetMapping("/students")
+    @PreAuthorize("hasRole('FACULTY')")
+    public String getFacultyStudents() {
+        return "Faculty Access";
+    }
+
+    @GetMapping("/reports")
+    @PreAuthorize("hasAnyRole('ADMIN','SuperAdmin')")
+    public String getAdminReports() {
+        return "Admin Reports";
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ApiResponse> forgotPassword(@RequestBody ForgotPasswordDTO request) {
+
+        ApiResponse response = authService.forgotPassword(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponse> resetPassword(@RequestBody ResetPasswordDTO request) {
+
+        ApiResponse response = authService.resetPassword(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<ApiResponse> changePassword(
+            @RequestBody ChangePasswordDTO request) {
+
+        ApiResponse response = authService.changePassword(request);
+        return ResponseEntity.ok(response);
+    }
+}
